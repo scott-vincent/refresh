@@ -12,7 +12,7 @@ Forked Version: This version of refresh which was forked from [https://github.co
 ## Installation
 
 ```
-$ go get github.com/markbates/refresh
+$ go get github.com/scott-vincent/refresh
 ```
 
 ## Getting Started
