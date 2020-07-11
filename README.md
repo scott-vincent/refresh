@@ -1,7 +1,6 @@
 # Refresh
 
-## Rebuild and re-run your Go server when backend files change +
-## Rebuild your Vue application when frontend files change.
+## Rebuild and re-run your Go server when back-end files change + Rebuild your Vue application when front-end files change
 
 This project was inspired by [https://github.com/pilu/fresh](https://github.com/pilu/fresh). The lack of updates and response from the maintainer, non-idiomatic codebase, numerous bugs, and lack of detailed reporting made the project a dead end for me to use. Enter `refresh`.
 
