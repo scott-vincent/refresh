@@ -19,7 +19,9 @@ func (m *Manager) runner() {
 			m.Logger.Success("Stopping: PID %d", pid)
 			cmd.Process.Kill()
 		}
-		if m.Debug {
+		if m.GoOrVue == "vue" {
+			cmd = exec.Command("ping", "-t", "localhost")
+		} else if m.Debug {
 			bp := m.FullBuildPath()
 			args := []string{"exec", bp}
 			args = append(args, m.CommandFlags...)

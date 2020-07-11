@@ -86,10 +86,15 @@ func (r *Manager) build(event fsnotify.Event) {
 			now := time.Now()
 			r.Logger.Print("Rebuild on: %s", event.Name)
 
-			args := []string{"build", "-v"}
-			args = append(args, r.BuildFlags...)
-			args = append(args, "-o", r.FullBuildPath(), r.BuildTargetPath)
-			cmd := exec.CommandContext(r.context, "go", args...)
+			var cmd *exec.Cmd
+			if r.GoOrVue == "vue" {
+				cmd = exec.CommandContext(r.context, "vue", "build")
+			} else {
+				args := []string{"build", "-v"}
+				args = append(args, r.BuildFlags...)
+				args = append(args, "-o", r.FullBuildPath(), r.BuildTargetPath)
+				cmd = exec.CommandContext(r.context, "go", args...)
+			}
 
 			err := r.runAndListen(cmd)
 			if err != nil {
