@@ -6,7 +6,7 @@ import (
 	"log"
 	"os"
 
-	"github.com/markbates/refresh/refresh"
+	"github.com/scott-vincent/refresh/refresh"
 	"github.com/spf13/cobra"
 )
 
