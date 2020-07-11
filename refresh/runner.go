@@ -6,6 +6,7 @@ import (
 	"io"
 	"os"
 	"os/exec"
+	"runtime"
 	"strings"
 )
 
@@ -19,8 +20,14 @@ func (m *Manager) runner() {
 			m.Logger.Success("Stopping: PID %d", pid)
 			cmd.Process.Kill()
 		}
+		var hideOutput = false
 		if m.GoOrVue == "vue" {
-			cmd = exec.Command("ping", "-t", "localhost")
+			if runtime.GOOS == "windows" {
+				cmd = exec.Command("ping", "-t", "localhost")
+			} else {
+				cmd = exec.Command("ping", "localhost")
+			}
+			hideOutput = true
 		} else if m.Debug {
 			bp := m.FullBuildPath()
 			args := []string{"exec", bp}
@@ -30,7 +37,7 @@ func (m *Manager) runner() {
 			cmd = exec.Command(m.FullBuildPath(), m.CommandFlags...)
 		}
 		go func() {
-			err := m.runAndListen(cmd)
+			err := m.runAndListen(cmd, hideOutput)
 			if err != nil {
 				m.Logger.Error(err)
 			}
@@ -38,9 +45,9 @@ func (m *Manager) runner() {
 	}
 }
 
-func (m *Manager) runAndListen(cmd *exec.Cmd) error {
+func (m *Manager) runAndListen(cmd *exec.Cmd, hideOutput bool) error {
 	cmd.Stderr = m.Stderr
-	if cmd.Stderr == nil {
+	if cmd.Stderr == nil && !hideOutput {
 		cmd.Stderr = os.Stderr
 	}
 
@@ -50,7 +57,7 @@ func (m *Manager) runAndListen(cmd *exec.Cmd) error {
 	}
 
 	cmd.Stdout = m.Stdout
-	if cmd.Stdout == nil {
+	if cmd.Stdout == nil && !hideOutput {
 		cmd.Stdout = os.Stdout
 	}
 
@@ -68,7 +75,11 @@ func (m *Manager) runAndListen(cmd *exec.Cmd) error {
 		return fmt.Errorf("%s\n%s", err, stderr.String())
 	}
 
-	m.Logger.Success("Running: %s (PID: %d)", strings.Join(cmd.Args, " "), cmd.Process.Pid)
+	if cmd.Args[0] == "ping" {
+		m.Logger.Success("Waiting for file changes (PID: %d)", cmd.Process.Pid)
+	} else {
+		m.Logger.Success("Running: %s (PID: %d)", strings.Join(cmd.Args, " "), cmd.Process.Pid)
+	}
 	err = cmd.Wait()
 	if err != nil {
 		return fmt.Errorf("%s\n%s", err, stderr.String())
