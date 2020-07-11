@@ -7,7 +7,7 @@ This project was inspired by [https://github.com/pilu/fresh](https://github.com/
 
 This simple command line application will watch your files, trigger a build of your Go binary and restart the application for you.
 
-Forked Version: This version of refresh which was forked from [https://github.com/markbates/refresh](https://github.com/markbates/refresh) adds an extra YAML setting *go_or_vue* so you can rebuild your *vue* front end when your *.vue* files change. If you do this, you should run a second version of refresh with *go_or_vue* set to *go* to rebuild (and rerun) the backend server.
+Forked Version: This version of refresh which was forked from [https://github.com/markbates/refresh](https://github.com/markbates/refresh) adds an extra YAML setting *go_or_vue* so you can rebuild your *vue* front end when your *.vue* files change. If you do this, you should run a second version of refresh with *go_or_vue* set to *go* to rebuild (and rerun) the backend server when backend files change.
 
 ## Installation
 
