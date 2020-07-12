@@ -92,7 +92,7 @@ func (r *Manager) build(event fsnotify.Event) {
 
 			var cmd *exec.Cmd
 			if r.GoOrVue == "vue" {
-				cmd = exec.CommandContext(r.context, "vue", "build")
+				cmd = exec.CommandContext(r.context, "npm", "run", "build")
 			} else {
 				args := []string{"build", "-v"}
 				args = append(args, r.BuildFlags...)
