@@ -14,6 +14,7 @@ import (
 	yaml "gopkg.in/yaml.v2"
 )
 
+// Configuration struct
 type Configuration struct {
 	AppRoot            string        `yaml:"app_root"`
 	BinaryName         string        `yaml:"binary_name"`
@@ -36,6 +37,7 @@ type Configuration struct {
 	Stdout             io.Writer     `yaml:"-"`
 }
 
+// FullBuildPath func
 func (c *Configuration) FullBuildPath() string {
 	buildPath := path.Join(c.BuildPath, c.BinaryName)
 	if runtime.GOOS == "windows" {
@@ -46,6 +48,7 @@ func (c *Configuration) FullBuildPath() string {
 	return buildPath
 }
 
+// Load func
 func (c *Configuration) Load(path string) error {
 	data, err := ioutil.ReadFile(path)
 	if err != nil {
@@ -55,6 +58,7 @@ func (c *Configuration) Load(path string) error {
 	return yaml.Unmarshal(data, c)
 }
 
+// Dump func
 func (c *Configuration) Dump(path string) error {
 	data, err := yaml.Marshal(c)
 	if err != nil {
@@ -63,6 +67,7 @@ func (c *Configuration) Dump(path string) error {
 	return ioutil.WriteFile(path, data, 0666)
 }
 
+// ID func
 func ID() string {
 	d, _ := os.Getwd()
 	return fmt.Sprintf("%x", md5.Sum([]byte(d)))

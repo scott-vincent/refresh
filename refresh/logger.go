@@ -14,10 +14,12 @@ import (
 
 const lformat = "=== %s ==="
 
+// Logger struct
 type Logger struct {
 	log *log.Logger
 }
 
+// NewLogger func
 func NewLogger(c *Configuration) *Logger {
 	color.NoColor = !c.EnableColors
 	if runtime.GOOS == "windows" {
@@ -35,18 +37,22 @@ func NewLogger(c *Configuration) *Logger {
 	}
 }
 
+// Success func
 func (l *Logger) Success(msg interface{}, args ...interface{}) {
 	l.log.Print(color.GreenString(fmt.Sprintf(lformat, msg), args...))
 }
 
+// Error func
 func (l *Logger) Error(msg interface{}, args ...interface{}) {
 	l.log.Print(color.RedString(fmt.Sprintf(lformat, msg), args...))
 }
 
+// Print func
 func (l *Logger) Print(msg interface{}, args ...interface{}) {
 	l.log.Printf(fmt.Sprintf(lformat, msg), args...)
 }
 
+// LogLocation func
 var LogLocation = func() string {
 	dir, _ := homedir.Dir()
 	dir, _ = homedir.Expand(dir)
@@ -55,6 +61,7 @@ var LogLocation = func() string {
 	return dir
 }
 
+// ErrorLogPath func
 var ErrorLogPath = func() string {
 	return path.Join(LogLocation(), ID()+".err")
 }

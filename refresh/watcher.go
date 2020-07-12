@@ -11,12 +11,14 @@ import (
 	"github.com/scott-vincent/refresh/filenotify"
 )
 
+// Watcher struct
 type Watcher struct {
 	filenotify.FileWatcher
 	*Manager
 	context context.Context
 }
 
+// NewWatcher func
 func NewWatcher(r *Manager) *Watcher {
 	var watcher filenotify.FileWatcher
 
@@ -33,13 +35,14 @@ func NewWatcher(r *Manager) *Watcher {
 	}
 }
 
+// Start func
 func (w *Watcher) Start() {
 	go func() {
 		for {
 			err := filepath.Walk(w.AppRoot, func(path string, info os.FileInfo, err error) error {
 				if info == nil {
 					w.cancelFunc()
-					return errors.New("nil directory!")
+					return errors.New("nil directory")
 				}
 				if info.IsDir() {
 					if strings.HasPrefix(filepath.Base(path), "_") {

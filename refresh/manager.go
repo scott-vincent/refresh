@@ -13,6 +13,7 @@ import (
 	"github.com/fsnotify/fsnotify"
 )
 
+// Manager struct
 type Manager struct {
 	*Configuration
 	ID         string
@@ -23,11 +24,13 @@ type Manager struct {
 	gil        *sync.Once
 }
 
+// New func
 func New(c *Configuration) *Manager {
-	return NewWithContext(c, context.Background())
+	return NewWithContext(context.Background(), c)
 }
 
-func NewWithContext(c *Configuration, ctx context.Context) *Manager {
+// NewWithContext func
+func NewWithContext(ctx context.Context, c *Configuration) *Manager {
 	ctx, cancelFunc := context.WithCancel(ctx)
 	m := &Manager{
 		Configuration: c,
@@ -41,6 +44,7 @@ func NewWithContext(c *Configuration, ctx context.Context) *Manager {
 	return m
 }
 
+// Start func
 func (r *Manager) Start() error {
 	w := NewWatcher(r)
 	w.Start()
