@@ -26,12 +26,14 @@ var runCmd = &cobra.Command{
 	},
 }
 
+// Run func
 func Run(cfgFile string) {
 	ctx := context.Background()
-	RunWithContext(cfgFile, ctx)
+	RunWithContext(ctx, cfgFile)
 }
 
-func RunWithContext(cfgFile string, ctx context.Context) {
+// RunWithContext func
+func RunWithContext(ctx context.Context, cfgFile string) {
 	c := &refresh.Configuration{}
 
 	if err := loadConfig(c, cfgFile); err != nil {
@@ -51,7 +53,7 @@ func RunWithContext(cfgFile string, ctx context.Context) {
 		c.Debug = true
 	}
 
-	r := refresh.NewWithContext(c, ctx)
+	r := refresh.NewWithContext(ctx, c)
 	if err := r.Start(); err != nil {
 		log.Fatalln(err)
 		os.Exit(-1)

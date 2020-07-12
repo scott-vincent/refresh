@@ -10,6 +10,7 @@ import (
 var cfgFile string
 var debug bool
 
+// RootCmd var
 var RootCmd = &cobra.Command{
 	Use:   "refresh",
 	Short: "Refresh is a command line tool that builds and (re)starts your Go application everytime you save a Go or template file.",
@@ -21,6 +22,7 @@ var RootCmd = &cobra.Command{
 	},
 }
 
+// Execute func
 func Execute() {
 	if err := RootCmd.Execute(); err != nil {
 		fmt.Println(err)
