@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"fmt"
 	"os"
 
 	"github.com/scott-vincent/refresh/refresh"
@@ -28,6 +29,15 @@ var initCmd = &cobra.Command{
 			CommandEnv:         []string{},
 			EnableColors:       true,
 		}
-		c.Dump(cfgFile)
+
+		if cfgFile == "" {
+			cfgFile = "refresh.yml"
+		}
+		err := c.Dump(cfgFile)
+		if err != nil {
+			fmt.Println("Failed to create file:", cfgFile, "error:", err)
+		} else {
+			fmt.Println("Created file:", cfgFile)
+		}
 	},
 }

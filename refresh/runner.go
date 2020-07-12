@@ -6,12 +6,12 @@ import (
 	"io"
 	"os"
 	"os/exec"
-	"runtime"
 	"strings"
 )
 
 func (m *Manager) runner() {
-	var cmd *exec.Cmd
+	var cmd *exec.Cmd = nil
+
 	for {
 		<-m.Restart
 		if cmd != nil {
@@ -20,34 +20,34 @@ func (m *Manager) runner() {
 			m.Logger.Success("Stopping: PID %d", pid)
 			cmd.Process.Kill()
 		}
-		var hideOutput = false
-		if m.GoOrVue == "vue" {
-			if runtime.GOOS == "windows" {
-				cmd = exec.Command("ping", "-t", "localhost")
+
+		if m.GoOrVue != "vue" {
+			if m.Debug {
+				bp := m.FullBuildPath()
+				args := []string{"exec", bp}
+				args = append(args, m.CommandFlags...)
+				cmd = exec.Command("dlv", args...)
 			} else {
-				cmd = exec.Command("ping", "localhost")
+				cmd = exec.Command(m.FullBuildPath(), m.CommandFlags...)
 			}
-			hideOutput = true
-		} else if m.Debug {
-			bp := m.FullBuildPath()
-			args := []string{"exec", bp}
-			args = append(args, m.CommandFlags...)
-			cmd = exec.Command("dlv", args...)
-		} else {
-			cmd = exec.Command(m.FullBuildPath(), m.CommandFlags...)
 		}
-		go func() {
-			err := m.runAndListen(cmd, hideOutput)
-			if err != nil {
-				m.Logger.Error(err)
-			}
-		}()
+
+		if cmd == nil {
+			m.Logger.Success("Waiting for file changes")
+		} else {
+			go func() {
+				err := m.runAndListen(cmd)
+				if err != nil {
+					m.Logger.Error(err)
+				}
+			}()
+		}
 	}
 }
 
-func (m *Manager) runAndListen(cmd *exec.Cmd, hideOutput bool) error {
+func (m *Manager) runAndListen(cmd *exec.Cmd) error {
 	cmd.Stderr = m.Stderr
-	if cmd.Stderr == nil && !hideOutput {
+	if cmd.Stderr == nil {
 		cmd.Stderr = os.Stderr
 	}
 
@@ -57,7 +57,7 @@ func (m *Manager) runAndListen(cmd *exec.Cmd, hideOutput bool) error {
 	}
 
 	cmd.Stdout = m.Stdout
-	if cmd.Stdout == nil && !hideOutput {
+	if cmd.Stdout == nil {
 		cmd.Stdout = os.Stdout
 	}
 
@@ -75,11 +75,8 @@ func (m *Manager) runAndListen(cmd *exec.Cmd, hideOutput bool) error {
 		return fmt.Errorf("%s\n%s", err, stderr.String())
 	}
 
-	if cmd.Args[0] == "ping" {
-		m.Logger.Success("Waiting for file changes (PID: %d)", cmd.Process.Pid)
-	} else {
-		m.Logger.Success("Running: %s (PID: %d)", strings.Join(cmd.Args, " "), cmd.Process.Pid)
-	}
+	m.Logger.Success("Running: %s (PID: %d)", strings.Join(cmd.Args, " "), cmd.Process.Pid)
+
 	err = cmd.Wait()
 	if err != nil {
 		return fmt.Errorf("%s\n%s", err, stderr.String())

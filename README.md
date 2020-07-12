@@ -20,13 +20,13 @@ $ go get github.com/scott-vincent/refresh
 First you'll want to create a `refresh.yml` configuration file:
 
 ```
-$ refresh init -c refresh.yml
+$ refresh init
 ```
 
 If you want the config file in a different directory:
 
 ```
-$ refresh init -c path/to/config.yml
+$ refresh init -c path/to/refresh.yml
 ```
 
 Set it up the way you want, but I believe the defaults really speak for themselves, and will probably work for 90% of the use cases out there.

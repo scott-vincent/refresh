@@ -96,7 +96,7 @@ func (r *Manager) build(event fsnotify.Event) {
 				cmd = exec.CommandContext(r.context, "go", args...)
 			}
 
-			err := r.runAndListen(cmd, false)
+			err := r.runAndListen(cmd)
 			if err != nil {
 				if strings.Contains(err.Error(), "no buildable Go source files") {
 					r.cancelFunc()
